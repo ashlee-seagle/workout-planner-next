@@ -1,5 +1,6 @@
 "use server";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { createExercise, createWorkout } from "@/repositories/workoutRepository";
 
 export async function createWorkoutAction(formData: FormData) {
@@ -38,6 +39,10 @@ export async function createExerciseAction(formData: FormData) {
         name: name.trim(),
         workoutId: workoutId,
     });
+
+    revalidatePath("/workouts");
+    revalidatePath(`/workouts/${workoutId}`);
+    
     redirect(`/workouts/${workoutId}`);
     
 }
