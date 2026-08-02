@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getWorkouts } from "@/repositories/workoutRepository";
 
 // Temporary until authentication is implemented.
@@ -17,17 +18,24 @@ export default async function WorkoutsPage() {
       ) : (
         <ul className="mt-8 space-y-4">
           {workouts.map((workout) => (
-            <li key={workout.id} className="rounded-lg border p-4 shadow-sm">
-              <h2 className="text-lg font-medium">{workout.title}</h2>
+            <li key={workout.id}>
+              <Link
+                href={`/workouts/${workout.id}`}
+                className="block rounded-lg border p-4 shadow-sm transition hover:shadow-md"
+              >
+                <article>
+                  <h2 className="text-lg font-medium">{workout.title}</h2>
 
-              {workout.goal && (
-                <p className="mt-2 text-sm text-gray-600">{workout.goal}</p>
-              )}
+                  {workout.goal && (
+                    <p className="mt-2 text-sm text-gray-600">{workout.goal}</p>
+                  )}
 
-              <p className="mt-3 text-sm text-gray-500">
-                {workout._count.exercises} exercise
-                {workout._count.exercises !== 1 ? "s" : ""}
-              </p>
+                  <p className="mt-3 text-sm text-gray-500">
+                    {workout._count.exercises} exercise
+                    {workout._count.exercises !== 1 ? "s" : ""}
+                  </p>
+                </article>
+              </Link>
             </li>
           ))}
         </ul>
