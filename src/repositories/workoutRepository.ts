@@ -19,3 +19,21 @@ export async function createWorkout(input: CreateWorkoutInput) {
         data: input,
     });
 } 
+
+export async function getWorkouts(userId: string) {
+    return prisma.workout.findMany({
+        where: {
+            userId
+        },
+        orderBy: {
+            createdAt: "desc",
+        },
+        include: {
+            _count: { 
+                select: {
+                    exercises: true,
+                },
+            },
+        },
+    });
+}
