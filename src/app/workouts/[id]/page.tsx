@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getWorkout } from "@/repositories/workoutRepository";
+import { createExerciseAction } from "@/actions/workoutActions";
 import { notFound } from "next/navigation";
 
 // Temporary until authentication is implemented.
@@ -14,7 +15,7 @@ export default async function WorkoutPage({
   const workout = await getWorkout(id, DEV_USER_ID);
 
   if (!workout) {
-    return notFound();
+    notFound();
   }
   return (
     <div className="mx-auto max-w-3xl">
@@ -101,6 +102,33 @@ export default async function WorkoutPage({
             ))}
           </ol>
         )}
+      </section>
+      <section className="mt-10">
+        <h2 className="text-2xl font-semibold">Add Exercise</h2>
+        <form action={createExerciseAction} className="mt-6 space-y-4">
+          <input type="hidden" name="workoutId" value={workout.id} />
+
+          <div>
+            <label htmlFor="name" className="mb-1 block text-sm font-medium">
+              Exercise Name
+            </label>
+
+            <input
+              id="name"
+              name="name"
+              type="text"
+              required
+              className="w-full rounded-md border px-3 py-2"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="rounded-md bg-black px-4 py-2 text-white hover:bg-gray-800"
+          >
+            Add Exercise
+          </button>
+        </form>
       </section>
     </div>
   );

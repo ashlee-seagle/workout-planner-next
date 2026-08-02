@@ -11,6 +11,17 @@ export type CreateWorkoutInput = {
   userId: string;
 };
 
+export type CreateExerciseInput = {
+    name: string;
+    sets?: number;
+    reps?: string;
+    weight?: number;
+    restSeconds?: number;
+    notes?: string;
+    workoutId: string;
+};
+
+ 
 /**
  * Creates a workout owned by the specified user.
  */
@@ -19,6 +30,21 @@ export async function createWorkout(input: CreateWorkoutInput) {
         data: input,
     });
 } 
+
+export async function createExercise(input: CreateExerciseInput) {
+    const exerciseCount = await prisma.exercise.count({
+    where: {
+      workoutId: input.workoutId,
+    },
+    });
+
+  return prisma.exercise.create({
+    data: {
+      ...input,
+      order: exerciseCount + 1,
+    },
+    });
+}
 
 export async function getWorkouts(userId: string) {
     return prisma.workout.findMany({

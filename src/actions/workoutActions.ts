@@ -1,5 +1,6 @@
 "use server";
-import { createWorkout } from "@/repositories/workoutRepository";
+import { redirect } from "next/navigation";
+import { createExercise, createWorkout } from "@/repositories/workoutRepository";
 
 export async function createWorkoutAction(formData: FormData) {
   const title = formData.get("title");
@@ -20,4 +21,23 @@ export async function createWorkoutAction(formData: FormData) {
     // Temporary until authentication is implemented
     userId: DEV_USER_ID,
   });
+}
+
+export async function createExerciseAction(formData: FormData) {
+    const name = formData.get("name");
+    const workoutId = formData.get("workoutId");
+
+    if (typeof name !== "string" || !name.trim()) {
+        throw new Error("Name is required.");
+    }
+    if (typeof workoutId !== "string" || !workoutId.trim()) {
+        throw new Error("Workout ID is required.");
+    }
+
+    await createExercise({
+        name: name.trim(),
+        workoutId: workoutId,
+    });
+    redirect(`/workouts/${workoutId}`);
+    
 }
