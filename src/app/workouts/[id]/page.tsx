@@ -85,12 +85,14 @@ export default async function WorkoutPage({
                 <h3 className="font-medium">{exercise.name}</h3>
 
                 <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-gray-600">
-                  {exercise.sets && <span>{exercise.sets} sets</span>}
+                  {exercise.sets != null && <span>{exercise.sets} sets</span>}
                   {exercise.reps && <span>{exercise.reps} reps</span>}
-                  {exercise.weight && (
+
+                  {exercise.weight != null && (
                     <span>{exercise.weight.toString()} lb</span>
                   )}
-                  {exercise.restSeconds && (
+
+                  {exercise.restSeconds != null && (
                     <span>{exercise.restSeconds} sec rest</span>
                   )}
                 </div>
@@ -118,6 +120,66 @@ export default async function WorkoutPage({
               name="name"
               type="text"
               required
+              className="w-full rounded-md border px-3 py-2"
+            />
+          </div>
+          <div>
+            <label htmlFor="sets" className="mb-1 block text-sm font-medium">
+              Number of Sets
+            </label>
+            <input
+              id="sets"
+              name="sets"
+              type="number"
+              min={1}
+              className="w-full rounded-md border px-3 py-2"
+            />
+          </div>
+          <div>
+            <label htmlFor="reps" className="mb-1 block text-sm font-medium">
+              Number of Reps
+            </label>
+            <input
+              id="reps"
+              name="reps"
+              type="text"
+              className="w-full rounded-md border px-3 py-2"
+            />
+          </div>
+          <div>
+            <label htmlFor="weight" className="mb-1 block text-sm font-medium">
+              Weight (lb)
+            </label>
+            <input
+              id="weight"
+              name="weight"
+              type="number"
+              step="0.5"
+              className="w-full rounded-md border px-3 py-2"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="restSeconds"
+              className="mb-1 block text-sm font-medium"
+            >
+              Rest (seconds)
+            </label>
+            <input
+              id="restSeconds"
+              name="restSeconds"
+              type="number"
+              min={0}
+              className="w-full rounded-md border px-3 py-2"
+            />
+          </div>
+          <div>
+            <label htmlFor="notes" className="mb-1 block text-sm font-medium">
+              Notes
+            </label>
+            <textarea
+              id="notes"
+              name="notes"
               className="w-full rounded-md border px-3 py-2"
             />
           </div>
