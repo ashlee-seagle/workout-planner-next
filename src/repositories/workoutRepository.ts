@@ -10,15 +10,13 @@ export type CreateWorkoutInput = {
   notes?: string;
   userId: string;
 };
-
-export type CreateExerciseInput = {
-    name: string;
-    sets?: number;
-    reps?: string;
-    weight?: number;
-    restSeconds?: number;
-    notes?: string;
-    workoutId: string;
+export type ExerciseInput = {
+  name: string;
+  sets?: number | null;
+  reps?: string | null;
+  weight?: number | null;
+  restSeconds?: number | null;
+  notes?: string | null;
 };
 
  
@@ -31,16 +29,17 @@ export async function createWorkout(input: CreateWorkoutInput) {
     });
 } 
 
-export async function createExercise(input: CreateExerciseInput) {
+export async function createExercise(workoutId:string, input: ExerciseInput) {
     const exerciseCount = await prisma.exercise.count({
     where: {
-      workoutId: input.workoutId,
+      workoutId,
     },
     });
 
   return prisma.exercise.create({
     data: {
       ...input,
+      workoutId,
       order: exerciseCount + 1,
     },
     });
@@ -78,4 +77,30 @@ export async function getWorkout(id: string, userId: string) {
             }
         }
     })
+}
+
+export async function getExercise(
+  exerciseId: string,
+  workoutId: string,
+) {
+  return prisma.exercise.findFirst({
+    where: {
+      id: exerciseId,
+      workoutId,
+    },
+  });
+}
+
+export async function updateExercise(
+  exerciseId: string,
+  workoutId: string,
+  input: ExerciseInput,
+) {
+    return prisma.exercise.updateMany({
+    where: {
+      id: exerciseId,
+      workoutId,
+    },
+    data: input,
+  });
 }
