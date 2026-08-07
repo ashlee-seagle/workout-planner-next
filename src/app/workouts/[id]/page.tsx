@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { getWorkout } from "@/repositories/workoutRepository";
-import { createExerciseAction } from "@/actions/workoutActions";
+import {
+  createExerciseAction,
+  deleteExerciseAction,
+} from "@/actions/workoutActions";
 import { notFound } from "next/navigation";
 
 // Temporary until authentication is implemented.
@@ -100,12 +103,30 @@ export default async function WorkoutPage({
                 {exercise.notes && (
                   <p className="mt-3 text-sm">{exercise.notes}</p>
                 )}
-                <Link
-                  href={`/workouts/${workout.id}/exercises/${exercise.id}/edit`}
-                  className="text-sm font-medium"
-                >
-                  Edit
-                </Link>
+                <div className="mt-4 flex items-center gap-4">
+                  <Link
+                    href={`/workouts/${workout.id}/exercises/${exercise.id}/edit`}
+                    className="text-sm font-medium"
+                  >
+                    Edit
+                  </Link>
+
+                  <form action={deleteExerciseAction}>
+                    <input
+                      type="hidden"
+                      name="exerciseId"
+                      value={exercise.id}
+                    />
+                    <input type="hidden" name="workoutId" value={workout.id} />
+
+                    <button
+                      type="submit"
+                      className="text-sm font-medium text-red-600 hover:text-red-700"
+                    >
+                      Delete
+                    </button>
+                  </form>
+                </div>
               </li>
             ))}
           </ol>
