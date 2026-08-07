@@ -100,6 +100,12 @@ export default async function WorkoutPage({
                 {exercise.notes && (
                   <p className="mt-3 text-sm">{exercise.notes}</p>
                 )}
+                <Link
+                  href={`/workouts/${workout.id}/exercises/${exercise.id}/edit`}
+                  className="text-sm font-medium"
+                >
+                  Edit
+                </Link>
               </li>
             ))}
           </ol>
