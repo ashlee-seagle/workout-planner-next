@@ -1,7 +1,7 @@
 "use server";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { createExercise, createWorkout, getWorkout, updateExercise } from "@/repositories/workoutRepository";
+import { createExercise, createWorkout, getWorkout, updateExercise, deleteExercise } from "@/repositories/workoutRepository";
 
 const DEV_USER_ID = "cmsagifuk0000upu5lajy8s7a";
 
@@ -184,5 +184,32 @@ const notes =
   }
 
   revalidatePath(`/workouts/${workoutId}`);
+  redirect(`/workouts/${workoutId}`);
+}
+
+export async function deleteExerciseAction(formData: FormData) {
+  const exerciseIdValue = formData.get("exerciseId");
+  const workoutIdValue = formData.get("workoutId");
+
+  if (typeof exerciseIdValue !== "string" || !exerciseIdValue.trim()) {
+    throw new Error("Exercise ID is required.");
+  }
+
+  if (typeof workoutIdValue !== "string" || !workoutIdValue.trim()) {
+    throw new Error("Workout ID is required.");
+  }
+
+  const exerciseId = exerciseIdValue.trim();
+  const workoutId = workoutIdValue.trim();
+
+  const result = await deleteExercise(exerciseId, workoutId);
+
+  if (result.count === 0) {
+    throw new Error("Exercise not found.");
+  }
+
+  revalidatePath("/workouts");
+  revalidatePath(`/workouts/${workoutId}`);
+
   redirect(`/workouts/${workoutId}`);
 }

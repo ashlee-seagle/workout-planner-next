@@ -104,3 +104,15 @@ export async function updateExercise(
     data: input,
   });
 }
+
+export async function deleteExercise(
+  exerciseId: string,
+  workoutId: string,
+) {
+  return prisma.exercise.deleteMany({
+    where: {
+      id: exerciseId,
+      workoutId,
+    },
+  });
+}
