@@ -7,6 +7,7 @@ import {
   getWorkout,
   updateWorkout,
   updateExercise,
+  deleteWorkout,
   deleteExercise
 
 } from "@/repositories/workoutRepository";
@@ -262,6 +263,26 @@ const notes =
 
   revalidatePath(`/workouts/${workoutId}`);
   redirect(`/workouts/${workoutId}`);
+}
+
+export async function deleteWorkoutAction(formData: FormData) {
+  const workoutIdValue = formData.get("workoutId");
+
+  if (typeof workoutIdValue !== "string" || !workoutIdValue.trim()) {
+    throw new Error("Workout ID is required.");
+  }
+
+  const workoutId = workoutIdValue.trim();
+
+  const result = await deleteWorkout(workoutId, DEV_USER_ID);
+
+  if (result.count === 0) {
+    throw new Error("Workout not found.");
+  }
+
+  revalidatePath("/workouts");
+
+  redirect("/workouts");
 }
 
 export async function deleteExerciseAction(formData: FormData) {
