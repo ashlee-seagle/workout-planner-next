@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getWorkout } from "@/repositories/workoutRepository";
 import {
   createExerciseAction,
+  deleteWorkoutAction,
   deleteExerciseAction,
 } from "@/actions/workoutActions";
 import { notFound } from "next/navigation";
@@ -41,6 +42,16 @@ export default async function WorkoutPage({
           >
             Edit Workout
           </Link>
+          <form action={deleteWorkoutAction}>
+            <input type="hidden" name="workoutId" value={workout.id} />
+
+            <button
+              type="submit"
+              className="text-sm font-medium text-red-600 hover:text-red-700"
+            >
+              Delete Workout
+            </button>
+          </form>
         </div>
 
         <div className="mt-6 space-y-4 rounded-lg border p-6">

@@ -125,6 +125,18 @@ export async function updateExercise(
   });
 }
 
+export async function deleteWorkout(
+  workoutId: string,
+  userId: string,
+) {
+  return prisma.workout.deleteMany({
+    where: {
+      id: workoutId,
+      userId,
+    },
+  });
+}
+
 export async function deleteExercise(
   exerciseId: string,
   workoutId: string,
