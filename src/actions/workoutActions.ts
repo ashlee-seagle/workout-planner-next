@@ -1,7 +1,16 @@
 "use server";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { createExercise, createWorkout, getWorkout, updateExercise, deleteExercise } from "@/repositories/workoutRepository";
+import {
+  createExercise,
+  createWorkout,
+  getWorkout,
+  updateWorkout,
+  updateExercise,
+  deleteExercise
+
+} from "@/repositories/workoutRepository";
+import { ExperienceLevel } from "@/generated/prisma/enums";
 
 const DEV_USER_ID = "cmsagifuk0000upu5lajy8s7a";
 
@@ -13,15 +22,12 @@ export async function createWorkoutAction(formData: FormData) {
     throw new Error("Title is required.");
   }
 
-  await createWorkout({
+  await createWorkout(DEV_USER_ID, {
     title: title.trim(),
     goal:
       typeof goal === "string" && goal.trim()
         ? goal.trim()
-        : undefined,
-
-    // Temporary until authentication is implemented
-    userId: DEV_USER_ID,
+        : undefined
   });
 }
 
@@ -98,6 +104,77 @@ export async function createExerciseAction(formData: FormData) {
     restSeconds,
     notes,
   });
+
+  revalidatePath("/workouts");
+  revalidatePath(`/workouts/${workoutId}`);
+
+  redirect(`/workouts/${workoutId}`);
+}
+
+export async function updateWorkoutAction(formData: FormData) {
+  const workoutIdValue = formData.get("workoutId");
+  const titleValue = formData.get("title");
+  const goalValue = formData.get("goal");
+  const durationMinutesValue = formData.get("durationMinutes");
+  const experienceLevelValue = formData.get("experienceLevel");
+  const equipmentValue = formData.get("equipment");
+  const notesValue = formData.get("notes");
+
+  if (typeof workoutIdValue !== "string" || !workoutIdValue.trim()) {
+    throw new Error("Workout ID is required.");
+  }
+
+  if (typeof titleValue !== "string" || !titleValue.trim()) {
+    throw new Error("Title is required.");
+  }
+
+  const workoutId = workoutIdValue.trim();
+
+  const goal =
+    typeof goalValue === "string" && goalValue.trim()
+      ? goalValue.trim()
+      : null;
+
+  const durationMinutes =
+    typeof durationMinutesValue === "string" && durationMinutesValue.trim()
+      ? Number(durationMinutesValue)
+      : null;
+
+  const equipment =
+    typeof equipmentValue === "string" && equipmentValue.trim()
+      ? equipmentValue.trim()
+      : null;
+
+  const notes =
+    typeof notesValue === "string" && notesValue.trim()
+      ? notesValue.trim()
+      : null;
+
+  const experienceLevel =
+  typeof experienceLevelValue === "string" &&
+  ["BEGINNER", "INTERMEDIATE", "ADVANCED"].includes(experienceLevelValue)
+    ? (experienceLevelValue as ExperienceLevel)
+    : null;
+
+  if (
+    durationMinutes !== null &&
+    (!Number.isInteger(durationMinutes) || durationMinutes < 1)
+  ) {
+    throw new Error("Duration must be a whole number of at least 1.");
+  }
+
+  const result = await updateWorkout(workoutId, DEV_USER_ID, {
+    title: titleValue.trim(),
+    goal,
+    durationMinutes,
+    equipment,
+    experienceLevel,
+    notes,
+  });
+ 
+  if (result.count === 0) {
+    throw new Error("Workout not found.");
+  }
 
   revalidatePath("/workouts");
   revalidatePath(`/workouts/${workoutId}`);

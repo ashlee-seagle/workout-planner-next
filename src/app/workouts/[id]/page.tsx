@@ -30,9 +30,18 @@ export default async function WorkoutPage({
       </Link>
 
       <div className="mt-6">
-        <h1 className="text-3xl font-semibold tracking-tight">
-          {workout.title}
-        </h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-semibold tracking-tight">
+            {workout.title}
+          </h1>
+
+          <Link
+            href={`/workouts/${workout.id}/edit`}
+            className="text-sm font-medium text-gray-600 hover:text-black"
+          >
+            Edit Workout
+          </Link>
+        </div>
 
         <div className="mt-6 space-y-4 rounded-lg border p-6">
           {workout.goal && (

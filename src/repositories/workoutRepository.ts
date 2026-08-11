@@ -1,15 +1,15 @@
 import prisma from "../lib/prisma";
 import { ExperienceLevel } from "../generated/prisma/enums";
 
-export type CreateWorkoutInput = {
+export type WorkoutInput = {
   title: string;
-  goal?: string;
-  durationMinutes?: number;
-  experienceLevel?: ExperienceLevel;
-  equipment?: string;
-  notes?: string;
-  userId: string;
+  goal?: string | null;
+  durationMinutes?: number | null;
+  experienceLevel?: ExperienceLevel | null;
+  equipment?: string | null;
+  notes?: string | null;
 };
+
 export type ExerciseInput = {
   name: string;
   sets?: number | null;
@@ -23,11 +23,17 @@ export type ExerciseInput = {
 /**
  * Creates a workout owned by the specified user.
  */
-export async function createWorkout(input: CreateWorkoutInput) {
-    return prisma.workout.create({
-        data: input,
-    });
-} 
+export async function createWorkout(
+  userId: string,
+  input: WorkoutInput,
+) {
+  return prisma.workout.create({
+    data: {
+      ...input,
+      userId,
+    },
+  });
+}
 
 export async function createExercise(workoutId:string, input: ExerciseInput) {
     const exerciseCount = await prisma.exercise.count({
@@ -88,6 +94,20 @@ export async function getExercise(
       id: exerciseId,
       workoutId,
     },
+  });
+}
+
+export async function updateWorkout(
+  workoutId: string,
+  userId: string,
+  input: WorkoutInput,
+) {
+  return prisma.workout.updateMany({
+    where: {
+      id: workoutId,
+      userId,
+    },
+    data: input,
   });
 }
 
