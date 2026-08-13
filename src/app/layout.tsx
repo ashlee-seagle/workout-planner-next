@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Link from "next/link";
+import { auth, signIn, signOut } from "@/auth";
 
 export const metadata: Metadata = {
   title: "Workout Planner",
   description: "Create, save, and manage personalized workouts.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
   return (
     <html lang="en">
       <body>
@@ -25,6 +27,35 @@ export default function RootLayout({
                   Home
                 </Link>
               </nav>
+              {session?.user ? (
+                <div className="flex items-center gap-4">
+                  {session.user.name && (
+                    <span className="text-sm">{session.user.name}</span>
+                  )}
+
+                  <form
+                    action={async () => {
+                      "use server";
+                      await signOut();
+                    }}
+                  >
+                    <button type="submit" className="text-sm font-medium">
+                      Sign Out
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                <form
+                  action={async () => {
+                    "use server";
+                    await signIn("google");
+                  }}
+                >
+                  <button type="submit" className="text-sm font-medium">
+                    Sign In
+                  </button>
+                </form>
+              )}
             </div>
           </header>
 
