@@ -1,9 +1,8 @@
+import { auth } from "@/auth";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getWorkout } from "@/repositories/workoutRepository";
 import { updateWorkoutAction } from "@/actions/workoutActions";
-
-const DEV_USER_ID = "cmsagifuk0000upu5lajy8s7a";
 
 export default async function EditWorkoutPage({
   params,
@@ -11,7 +10,12 @@ export default async function EditWorkoutPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const workout = await getWorkout(id, DEV_USER_ID);
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return null;
+  }
+  const workout = await getWorkout(id, session.user.id);
 
   if (!workout) {
     notFound();

@@ -1,4 +1,5 @@
 "use server";
+import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import {
@@ -13,17 +14,27 @@ import {
 } from "@/repositories/workoutRepository";
 import { ExperienceLevel } from "@/generated/prisma/enums";
 
-const DEV_USER_ID = "cmsagifuk0000upu5lajy8s7a";
+async function getAuthenticatedUserId() {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized.");
+  }
+
+  return session.user.id;
+}
 
 export async function createWorkoutAction(formData: FormData) {
   const title = formData.get("title");
   const goal = formData.get("goal");
 
+  const userId = await getAuthenticatedUserId();
+
   if (typeof title !== "string" || !title.trim()) {
     throw new Error("Title is required.");
   }
 
-  await createWorkout(DEV_USER_ID, {
+  await createWorkout(userId, {
     title: title.trim(),
     goal:
       typeof goal === "string" && goal.trim()
@@ -41,6 +52,8 @@ export async function createExerciseAction(formData: FormData) {
   const restSecondsValue = formData.get("restSeconds");
   const notesValue = formData.get("notes");
 
+  const userId = await getAuthenticatedUserId();
+
   if (typeof nameValue !== "string" || !nameValue.trim()) {
     throw new Error("Name is required.");
   }
@@ -51,7 +64,7 @@ export async function createExerciseAction(formData: FormData) {
 
   const workoutId = workoutIdValue.trim();
 
-  const workout = await getWorkout(workoutId, DEV_USER_ID);
+  const workout = await getWorkout(workoutId, userId);
 
   if (!workout) {
     throw new Error("Workout not found.");
@@ -120,6 +133,7 @@ export async function updateWorkoutAction(formData: FormData) {
   const experienceLevelValue = formData.get("experienceLevel");
   const equipmentValue = formData.get("equipment");
   const notesValue = formData.get("notes");
+  const userId = await getAuthenticatedUserId();
 
   if (typeof workoutIdValue !== "string" || !workoutIdValue.trim()) {
     throw new Error("Workout ID is required.");
@@ -164,7 +178,7 @@ export async function updateWorkoutAction(formData: FormData) {
     throw new Error("Duration must be a whole number of at least 1.");
   }
 
-  const result = await updateWorkout(workoutId, DEV_USER_ID, {
+  const result = await updateWorkout(workoutId, userId, {
     title: titleValue.trim(),
     goal,
     durationMinutes,
@@ -267,6 +281,7 @@ const notes =
 
 export async function deleteWorkoutAction(formData: FormData) {
   const workoutIdValue = formData.get("workoutId");
+  const userId = await getAuthenticatedUserId();
 
   if (typeof workoutIdValue !== "string" || !workoutIdValue.trim()) {
     throw new Error("Workout ID is required.");
@@ -274,7 +289,7 @@ export async function deleteWorkoutAction(formData: FormData) {
 
   const workoutId = workoutIdValue.trim();
 
-  const result = await deleteWorkout(workoutId, DEV_USER_ID);
+  const result = await deleteWorkout(workoutId, userId);
 
   if (result.count === 0) {
     throw new Error("Workout not found.");
