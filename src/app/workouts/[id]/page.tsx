@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import Link from "next/link";
 import { getWorkout } from "@/repositories/workoutRepository";
 import {
@@ -7,20 +8,23 @@ import {
 } from "@/actions/workoutActions";
 import { notFound } from "next/navigation";
 
-// Temporary until authentication is implemented.
-const DEV_USER_ID = "cmsagifuk0000upu5lajy8s7a";
-
 export default async function WorkoutPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const workout = await getWorkout(id, DEV_USER_ID);
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return null;
+  }
+  const workout = await getWorkout(id, session.user.id);
 
   if (!workout) {
     notFound();
   }
+
   return (
     <div className="mx-auto max-w-3xl">
       <Link
