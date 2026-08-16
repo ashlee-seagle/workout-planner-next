@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import Link from "next/link";
+import WorkoutCard from "@/components/WorkoutCard";
 import { getWorkouts } from "@/repositories/workoutRepository";
 export default async function Home() {
   const session = await auth();
@@ -84,30 +85,15 @@ export default async function Home() {
 
           <div className="mt-6 space-y-3">
             {recentWorkouts.map((workout) => (
-              <Link
+              <WorkoutCard
                 key={workout.id}
-                href={`/workouts/${workout.id}`}
-                className="block rounded-xl border p-5 shadow-sm transition hover:shadow-md"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold">{workout.title}</h3>
-
-                    {workout.goal && (
-                      <p className="mt-1 text-sm text-gray-600">
-                        {workout.goal}
-                      </p>
-                    )}
-
-                    <p className="mt-2 text-sm text-gray-500">
-                      {workout._count.exercises} exercise
-                      {workout._count.exercises !== 1 ? "s" : ""}
-                    </p>
-                  </div>
-
-                  <span className="text-xl text-gray-400">→</span>
-                </div>
-              </Link>
+                id={workout.id}
+                title={workout.title}
+                goal={workout.goal}
+                exerciseCount={workout._count.exercises}
+                durationMinutes={workout.durationMinutes}
+                experienceLevel={workout.experienceLevel}
+              />
             ))}
           </div>
         </section>
