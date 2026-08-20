@@ -26,143 +26,217 @@ export default async function WorkoutPage({
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto max-w-4xl space-y-10">
       <Link
         href="/workouts"
-        className="text-sm font-medium text-gray-600 hover:text-black"
+        className="inline-flex text-sm font-medium text-slate-600 transition hover:text-slate-900"
       >
         ← Back to workouts
       </Link>
 
-      <div className="mt-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-semibold tracking-tight">
-            {workout.title}
-          </h1>
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wider text-sky-600">
+              Workout
+            </p>
 
-          <Link
-            href={`/workouts/${workout.id}/edit`}
-            className="text-sm font-medium text-gray-600 hover:text-black"
-          >
-            Edit Workout
-          </Link>
-          <form action={deleteWorkoutAction}>
-            <input type="hidden" name="workoutId" value={workout.id} />
+            <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+              {workout.title}
+            </h1>
 
-            <button
-              type="submit"
-              className="text-sm font-medium text-red-600 hover:text-red-700"
+            {workout.goal && (
+              <p className="mt-3 max-w-2xl text-slate-600">{workout.goal}</p>
+            )}
+          </div>
+
+          <div className="flex shrink-0 items-center gap-4 sm:pt-1">
+            <form action={deleteWorkoutAction} className="flex">
+              <input type="hidden" name="workoutId" value={workout.id} />
+
+              <button
+                type="submit"
+                className="text-sm font-medium text-red-600 transition hover:text-red-700"
+              >
+                Delete Workout
+              </button>
+            </form>
+
+            <Link
+              href={`/workouts/${workout.id}/edit`}
+              className="text-sm font-medium text-sky-600 transition hover:text-sky-700"
             >
-              Delete Workout
-            </button>
-          </form>
+              Edit Workout
+            </Link>
+          </div>
         </div>
 
-        <div className="mt-6 space-y-4 rounded-lg border p-6">
-          {workout.goal && (
-            <div>
-              <h2 className="text-sm font-medium text-gray-500">Goal</h2>
-              <p className="mt-1">{workout.goal}</p>
-            </div>
+        <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-slate-500">
+          {workout.durationMinutes != null && (
+            <span>{workout.durationMinutes} min</span>
           )}
 
-          {workout.durationMinutes && (
-            <div>
-              <h2 className="text-sm font-medium text-gray-500">Duration</h2>
-              <p className="mt-1">{workout.durationMinutes} minutes</p>
-            </div>
+          {workout.durationMinutes != null && workout.experienceLevel && (
+            <span>•</span>
           )}
 
           {workout.experienceLevel && (
-            <div>
-              <h2 className="text-sm font-medium text-gray-500">
-                Experience level
-              </h2>
-              <p className="mt-1">{workout.experienceLevel.toLowerCase()}</p>
-            </div>
+            <span className="capitalize">
+              {workout.experienceLevel.toLowerCase()}
+            </span>
           )}
 
-          {workout.equipment && (
-            <div>
-              <h2 className="text-sm font-medium text-gray-500">Equipment</h2>
-              <p className="mt-1">{workout.equipment}</p>
-            </div>
-          )}
+          {(workout.durationMinutes != null || workout.experienceLevel) &&
+            workout.equipment && <span>•</span>}
 
-          {workout.notes && (
-            <div>
-              <h2 className="text-sm font-medium text-gray-500">Notes</h2>
-              <p className="mt-1 whitespace-pre-line">{workout.notes}</p>
-            </div>
+          {workout.equipment && <span>{workout.equipment}</span>}
+        </div>
+
+        {workout.notes && (
+          <div className="mt-6 rounded-xl bg-slate-50 p-5">
+            <h2 className="text-sm font-semibold text-slate-500">Notes</h2>
+            <p className="mt-2 whitespace-pre-line text-slate-700">
+              {workout.notes}
+            </p>
+          </div>
+        )}
+      </section>
+
+      <section>
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-semibold">Exercises</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Exercises included in this workout.
+            </p>
+          </div>
+
+          {workout.exercises.length > 0 && (
+            <span className="text-sm text-slate-500">
+              {workout.exercises.length} exercise
+              {workout.exercises.length !== 1 ? "s" : ""}
+            </span>
           )}
         </div>
-      </div>
-
-      <section className="mt-10">
-        <h2 className="text-2xl font-semibold">Exercises</h2>
 
         {workout.exercises.length === 0 ? (
-          <p className="mt-4 text-gray-600">
-            No exercises have been added yet.
-          </p>
+          <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center">
+            <h3 className="text-lg font-semibold">No exercises yet</h3>
+            <p className="mt-2 text-sm text-slate-500">
+              Add your first exercise below to start building this workout.
+            </p>
+          </div>
         ) : (
           <ol className="mt-6 space-y-4">
-            {workout.exercises.map((exercise) => (
-              <li key={exercise.id} className="rounded-lg border p-4">
-                <h3 className="font-medium">{exercise.name}</h3>
+            {workout.exercises.map((exercise, index) => (
+              <li
+                key={exercise.id}
+                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+              >
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                  <div className="flex min-w-0 flex-1 gap-4">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sky-100 font-semibold text-sky-700">
+                      {index + 1}
+                    </div>
 
-                <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-gray-600">
-                  {exercise.sets != null && <span>{exercise.sets} sets</span>}
-                  {exercise.reps && <span>{exercise.reps} reps</span>}
+                    <div className="min-w-0">
+                      <h3 className="text-lg font-semibold">{exercise.name}</h3>
 
-                  {exercise.weight != null && (
-                    <span>{exercise.weight.toString()} lb</span>
-                  )}
+                      <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-500">
+                        {exercise.sets != null && (
+                          <span>{exercise.sets} sets</span>
+                        )}
 
-                  {exercise.restSeconds != null && (
-                    <span>{exercise.restSeconds} sec rest</span>
-                  )}
-                </div>
+                        {exercise.reps && (
+                          <>
+                            {exercise.sets != null && <span>•</span>}
+                            <span>{exercise.reps} reps</span>
+                          </>
+                        )}
 
-                {exercise.notes && (
-                  <p className="mt-3 text-sm">{exercise.notes}</p>
-                )}
-                <div className="mt-4 flex items-center gap-4">
-                  <Link
-                    href={`/workouts/${workout.id}/exercises/${exercise.id}/edit`}
-                    className="text-sm font-medium"
-                  >
-                    Edit
-                  </Link>
+                        {exercise.weight != null && (
+                          <>
+                            {(exercise.sets != null || exercise.reps) && (
+                              <span>•</span>
+                            )}
+                            <span>{exercise.weight.toString()} lb</span>
+                          </>
+                        )}
 
-                  <form action={deleteExerciseAction}>
-                    <input
-                      type="hidden"
-                      name="exerciseId"
-                      value={exercise.id}
-                    />
-                    <input type="hidden" name="workoutId" value={workout.id} />
+                        {exercise.restSeconds != null && (
+                          <>
+                            {(exercise.sets != null ||
+                              exercise.reps ||
+                              exercise.weight != null) && <span>•</span>}
+                            <span>{exercise.restSeconds} sec rest</span>
+                          </>
+                        )}
+                      </div>
 
-                    <button
-                      type="submit"
-                      className="text-sm font-medium text-red-600 hover:text-red-700"
+                      {exercise.notes && (
+                        <p className="mt-3 text-sm text-slate-600">
+                          {exercise.notes}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex shrink-0 items-center gap-4 pl-14 sm:pt-1 sm:pl-0">
+                    <form action={deleteExerciseAction} className="flex">
+                      <input
+                        type="hidden"
+                        name="exerciseId"
+                        value={exercise.id}
+                      />
+                      <input
+                        type="hidden"
+                        name="workoutId"
+                        value={workout.id}
+                      />
+
+                      <button
+                        type="submit"
+                        className="text-sm font-medium text-red-600 transition hover:text-red-700"
+                      >
+                        Delete
+                      </button>
+                    </form>
+
+                    <Link
+                      href={`/workouts/${workout.id}/exercises/${exercise.id}/edit`}
+                      className="text-sm font-medium text-sky-600 transition hover:text-sky-700"
                     >
-                      Delete
-                    </button>
-                  </form>
+                      Edit
+                    </Link>
+                  </div>
                 </div>
               </li>
             ))}
           </ol>
         )}
       </section>
-      <section className="mt-10">
-        <h2 className="text-2xl font-semibold">Add Exercise</h2>
-        <form action={createExerciseAction} className="mt-6 space-y-4">
+
+      <section className="rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-8">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wider text-sky-600">
+            Add to workout
+          </p>
+
+          <h2 className="mt-2 text-2xl font-semibold">Add Exercise</h2>
+
+          <p className="mt-1 text-sm text-slate-500">
+            Add another movement to this workout.
+          </p>
+        </div>
+
+        <form action={createExerciseAction} className="mt-6 space-y-5">
           <input type="hidden" name="workoutId" value={workout.id} />
 
           <div>
-            <label htmlFor="name" className="mb-1 block text-sm font-medium">
+            <label
+              htmlFor="name"
+              className="mb-1 block text-sm font-medium text-slate-700"
+            >
               Exercise Name
             </label>
 
@@ -171,73 +245,100 @@ export default async function WorkoutPage({
               name="name"
               type="text"
               required
-              className="w-full rounded-md border px-3 py-2"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
             />
           </div>
-          <div>
-            <label htmlFor="sets" className="mb-1 block text-sm font-medium">
-              Number of Sets
-            </label>
-            <input
-              id="sets"
-              name="sets"
-              type="number"
-              min={1}
-              className="w-full rounded-md border px-3 py-2"
-            />
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label
+                htmlFor="sets"
+                className="mb-1 block text-sm font-medium text-slate-700"
+              >
+                Number of Sets
+              </label>
+
+              <input
+                id="sets"
+                name="sets"
+                type="number"
+                min={1}
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="reps"
+                className="mb-1 block text-sm font-medium text-slate-700"
+              >
+                Number of Reps
+              </label>
+
+              <input
+                id="reps"
+                name="reps"
+                type="text"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+              />
+            </div>
           </div>
-          <div>
-            <label htmlFor="reps" className="mb-1 block text-sm font-medium">
-              Number of Reps
-            </label>
-            <input
-              id="reps"
-              name="reps"
-              type="text"
-              className="w-full rounded-md border px-3 py-2"
-            />
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label
+                htmlFor="weight"
+                className="mb-1 block text-sm font-medium text-slate-700"
+              >
+                Weight (lb)
+              </label>
+
+              <input
+                id="weight"
+                name="weight"
+                type="number"
+                step="0.5"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="restSeconds"
+                className="mb-1 block text-sm font-medium text-slate-700"
+              >
+                Rest (seconds)
+              </label>
+
+              <input
+                id="restSeconds"
+                name="restSeconds"
+                type="number"
+                min={0}
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+              />
+            </div>
           </div>
-          <div>
-            <label htmlFor="weight" className="mb-1 block text-sm font-medium">
-              Weight (lb)
-            </label>
-            <input
-              id="weight"
-              name="weight"
-              type="number"
-              step="0.5"
-              className="w-full rounded-md border px-3 py-2"
-            />
-          </div>
+
           <div>
             <label
-              htmlFor="restSeconds"
-              className="mb-1 block text-sm font-medium"
+              htmlFor="notes"
+              className="mb-1 block text-sm font-medium text-slate-700"
             >
-              Rest (seconds)
-            </label>
-            <input
-              id="restSeconds"
-              name="restSeconds"
-              type="number"
-              min={0}
-              className="w-full rounded-md border px-3 py-2"
-            />
-          </div>
-          <div>
-            <label htmlFor="notes" className="mb-1 block text-sm font-medium">
               Notes
             </label>
+
             <textarea
               id="notes"
               name="notes"
-              className="w-full rounded-md border px-3 py-2"
+              rows={3}
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
             />
           </div>
 
           <button
             type="submit"
-            className="rounded-md bg-black px-4 py-2 text-white hover:bg-gray-800"
+            className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-700"
           >
             Add Exercise
           </button>
