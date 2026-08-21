@@ -13,7 +13,25 @@ export default function ExerciseModal({ workoutId }: ExerciseModalProps) {
 
   return (
     <>
-      <button onClick={() => setIsOpen(true)}>Add Exercise</button>
+      <div className="mt-10 flex flex-col gap-5 rounded-2xl border border-sky-200 bg-sky-50/60 p-6 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-slate-900">
+            Keep building your workout
+          </h2>
+
+          <p className="mt-1 text-sm text-slate-600">
+            Add another movement to this routine.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          className="shrink-0 rounded-lg bg-sky-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-sky-700"
+        >
+          + Add Exercise
+        </button>
+      </div>
 
       <Modal
         isOpen={isOpen}

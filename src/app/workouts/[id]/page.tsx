@@ -216,21 +216,7 @@ export default async function WorkoutPage({
         )}
       </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-8">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-wider text-sky-600">
-            Add to workout
-          </p>
-
-          <h2 className="mt-2 text-2xl font-semibold">Add Exercise</h2>
-
-          <p className="mt-1 text-sm text-slate-500">
-            Add another movement to this workout.
-          </p>
-        </div>
-
-        <ExerciseModal workoutId={workout.id}></ExerciseModal>
-      </section>
+      <ExerciseModal workoutId={workout.id}></ExerciseModal>
     </div>
   );
 }
