@@ -229,7 +229,7 @@ export default async function WorkoutPage({
           </p>
         </div>
 
-        <ExerciseModal workoutId="workout.id"></ExerciseModal>
+        <ExerciseModal workoutId={workout.id}></ExerciseModal>
       </section>
     </div>
   );
