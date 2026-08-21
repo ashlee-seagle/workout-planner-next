@@ -202,12 +202,15 @@ export default async function WorkoutPage({
                       </button>
                     </form>
 
-                    <Link
-                      href={`/workouts/${workout.id}/exercises/${exercise.id}/edit`}
-                      className="text-sm font-medium text-sky-600 transition hover:text-sky-700"
-                    >
-                      Edit
-                    </Link>
+                    <ExerciseModal
+                      mode="edit"
+                      workoutId={workout.id}
+                      exercise={{
+                        ...exercise,
+                        // Convert Prisma Decimal to a serializable number for the client component.
+                        weight: exercise.weight?.toNumber() ?? null,
+                      }}
+                    />
                   </div>
                 </div>
               </li>
@@ -216,7 +219,7 @@ export default async function WorkoutPage({
         )}
       </section>
 
-      <ExerciseModal workoutId={workout.id}></ExerciseModal>
+      <ExerciseModal mode="add" workoutId={workout.id}></ExerciseModal>
     </div>
   );
 }
